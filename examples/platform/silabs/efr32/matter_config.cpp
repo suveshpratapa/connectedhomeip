@@ -97,13 +97,13 @@ CHIP_ERROR SilabsMatterConfig::InitOpenThread(void)
 
 #if CHIP_DEVICE_CONFIG_THREAD_FTD
     ReturnErrorOnFailure(ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_Router));
-#else // CHIP_DEVICE_CONFIG_THREAD_FTD
-#if CHIP_DEVICE_CONFIG_ENABLE_SED
+#elif CHIP_DEVICE_CONFIG_THREAD_SSED
+    ReturnErrorOnFailure(ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_SynchronizedSleepyEndDevice));
+#elif CHIP_DEVICE_CONFIG_ENABLE_SED
     ReturnErrorOnFailure(ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_SleepyEndDevice));
-#else  // CHIP_DEVICE_CONFIG_ENABLE_SED
+#else
     ReturnErrorOnFailure(ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_MinimalEndDevice));
-#endif // CHIP_DEVICE_CONFIG_ENABLE_SED
-#endif // CHIP_DEVICE_CONFIG_THREAD_FTD
+#endif
 
     SILABS_LOG("Starting OpenThread task");
     return ThreadStackMgrImpl().StartThreadTask();

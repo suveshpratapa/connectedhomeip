@@ -84,6 +84,9 @@ if [ "$#" == "0" ]; then
         enable_sleepy_device
             Enable Sleepy end device. (Default false)
             Must also set chip_openthread_ftd=false
+        enable_synchronized_sed
+            Enable Synchronized Sleepy end device. (Default false)
+            Must also set enable_sleepy_device=true chip_openthread_ftd=false
         use_rs9116
             Build wifi example with extension board rs9116. (Default false)
         use_SiWx917
@@ -109,9 +112,12 @@ if [ "$#" == "0" ]; then
         --sed
             enable sleepy end device, set thread mtd
             For minimum consumption, add --low-power
+        --ssed
+            enable synchronized sleepy end device, with csl
+            For minimum consumption, add --low-power
         --low-power
             disables all power consuming features for the most power efficient build
-            This flag is to be used with --sed
+            This flag is to be used with --sed or -ssed
         --wifi <wf200 | rs9116>
             build wifi example variant for given exansion board
         --additional_data_advertising
@@ -174,6 +180,10 @@ else
                 ;;
             --sed)
                 optArgs+="enable_sleepy_device=true chip_openthread_ftd=false "
+                shift
+                ;;
+            --ssed)
+                optArgs+="enable_sleepy_device=true enable_synchronized_sed=true chip_openthread_ftd=false "
                 shift
                 ;;
             --low-power)
