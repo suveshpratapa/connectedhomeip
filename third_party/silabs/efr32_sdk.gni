@@ -46,10 +46,10 @@ declare_args() {
   use_system_view = false
 
   # ICD Configuration flags
-  sl_ot_csl_timeout_sec = 30 # 30s CSL timeout
+  sl_ot_csl_timeout_sec = 1 # 30s CSL timeout
 
-  sl_ot_idle_interval_ms = 30000  # 30s Idle Intervals
-  sl_ot_csl_idle_interval_ms = 25000  # 30s Idle Intervals
+  sl_ot_idle_interval_ms = 1000  # 30s Idle Intervals
+  sl_ot_csl_idle_interval_ms = 1500  # 30s Idle Intervals
 
   sl_ot_active_interval_ms = 200  # 200ms Active Intervals
   sl_ot_csl_active_interval_ms = 500  # 500ms Active Intervals
@@ -166,6 +166,7 @@ template("efr32_sdk") {
       "${efr32_sdk_root}/platform/middleware/glib/dmd",
       "${efr32_sdk_root}/platform/base/hal/plugin/psstore",
       "${efr32_sdk_root}/platform/base/hal/plugin/antenna",
+      "${efr32_sdk_root}/protocol/bluetooth/bgstack/ll/inc",
       "${efr32_sdk_root}/protocol/bluetooth/inc/",
       "${efr32_sdk_root}/util/plugin/plugin-common/fem-control",
       "${efr32_sdk_root}/util/silicon_labs/silabs_core/graphics",
@@ -188,7 +189,7 @@ template("efr32_sdk") {
       "${silabs_gen_folder}/autogen",
     ]
 
-    if (slc_generate || slc_reuse_files || silabs_family == "mgm24") {
+    if (slc_generate || slc_reuse_files || silabs_family == "mgm24" || true) {
       _include_dirs +=
           [ "${efr32_sdk_root}/hardware/driver/configuration_over_swo/inc/" ]
     }
@@ -423,12 +424,12 @@ template("efr32_sdk") {
       ]
 
       libs += [
-        "${sdk_support_root}/platform/radio/rail_lib/autogen/librail_release/librail_multiprotocol_efr32xg12_gcc_release.a",
-        "${sdk_support_root}/platform/emdrv/nvm3/lib/libnvm3_CM4_gcc.a",
+        "${efr32_sdk_root}/platform/radio/rail_lib/autogen/librail_release/librail_multiprotocol_efr32xg12_gcc_release.a",
+        "${efr32_sdk_root}/platform/emdrv/nvm3/lib/libnvm3_CM4_gcc.a",
       ]
 
       if (!chip_enable_ble_rs911x) {
-        libs += [ "${sdk_support_root}/protocol/bluetooth/lib/EFR32MG12P/GCC/libbluetooth.a" ]
+        libs += [ "${efr32_sdk_root}/protocol/bluetooth/lib/EFR32XG12/GCC/libbluetooth.a" ]
       }
 
       defines += [ "EFR32MG12" ]
@@ -464,9 +465,9 @@ template("efr32_sdk") {
       ]
 
       libs += [
-        "${sdk_support_root}/protocol/bluetooth/lib/EFR32XG24/GCC/libbluetooth.a",
-        "${sdk_support_root}/platform/radio/rail_lib/autogen/librail_release/librail_multiprotocol_efr32xg24_gcc_release.a",
-        "${sdk_support_root}/platform/emdrv/nvm3/lib/libnvm3_CM33_gcc.a",
+        "${efr32_sdk_root}/protocol/bluetooth/lib/EFR32XG24/GCC/libbluetooth.a",
+        "${efr32_sdk_root}/platform/radio/rail_lib/autogen/librail_release/librail_multiprotocol_efr32xg24_gcc_release.a",
+        "${efr32_sdk_root}/platform/emdrv/nvm3/lib/libnvm3_CM33_gcc.a",
       ]
 
       defines += [
@@ -597,6 +598,7 @@ template("efr32_sdk") {
       "${efr32_sdk_root}/platform/emlib/src/em_timer.c",
       "${efr32_sdk_root}/platform/peripheral/src/peripheral_sysrtc.c",
       "${efr32_sdk_root}/platform/radio/rail_lib/plugin/pa-conversions/pa_conversions_efr32.c",
+      "${efr32_sdk_root}/platform/radio/rail_lib/plugin/rail_util_power_manager_init/sl_rail_util_power_manager_init.c",
       "${efr32_sdk_root}/platform/radio/rail_lib/plugin/rail_util_pti/sl_rail_util_pti.c",
       "${efr32_sdk_root}/platform/security/sl_component/sl_mbedtls_support/src/aes_aes.c",
       "${efr32_sdk_root}/platform/security/sl_component/sl_mbedtls_support/src/crypto_aes.c",
@@ -745,7 +747,7 @@ template("efr32_sdk") {
       ]
     }
 
-    if (slc_generate || slc_reuse_files || silabs_family == "efr32mg24" || silabs_family == "mgm24") {
+    if (slc_generate || slc_reuse_files || silabs_family == "mgm24" || true) {
       sources += [
         "${efr32_sdk_root}/hardware/driver/configuration_over_swo/src/sl_cos.c",
         "${efr32_sdk_root}/platform/driver/debug/src/sl_debug_swo.c",
@@ -918,7 +920,6 @@ template("efr32_sdk") {
       sources += [
         "${efr32_sdk_root}/platform/Device/SiliconLabs/EFR32MG24/Source/startup_efr32mg24.c",
         "${efr32_sdk_root}/platform/Device/SiliconLabs/EFR32MG24/Source/system_efr32mg24.c",
-        "${efr32_sdk_root}/platform/radio/rail_lib/plugin/rail_util_power_manager_init/sl_rail_util_power_manager_init.c",
         "${efr32_sdk_root}/platform/radio/rail_lib/plugin/pa-conversions/pa_curves_efr32.c",
         "${efr32_sdk_root}/platform/security/sl_component/se_manager/src/sl_se_manager.c",
         "${efr32_sdk_root}/platform/security/sl_component/se_manager/src/sl_se_manager_attestation.c",

@@ -597,6 +597,7 @@ GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadDeviceType(Connec
     case ConnectivityManager::kThreadDeviceType_SynchronizedSleepyEndDevice:
         linkMode.mDeviceType   = false;
         linkMode.mRxOnWhenIdle = false;
+        linkMode.mNetworkData = true;
         break;
     default:
         break;
@@ -1861,6 +1862,7 @@ GenericThreadStackManagerImpl_OpenThread<ImplClass>::SetSEDIntervalMode(Connecti
 #if CHIP_DEVICE_CONFIG_THREAD_SSED
     // Get CSL period in units of 10 symbols, convert it to microseconds and divide by 1000 to get milliseconds.
     uint32_t curIntervalMS = otLinkCslGetPeriod(mOTInst) * OT_US_PER_TEN_SYMBOLS / 1000;
+    ChipLogProgress(DeviceLayer, "----------------------------------------- SSED interval BEFORE set: %" PRId32 "ms -------------------------------------------------------", curIntervalMS);
 #else
     uint32_t curIntervalMS = otLinkGetPollPeriod(mOTInst);
 #endif
@@ -1870,7 +1872,13 @@ GenericThreadStackManagerImpl_OpenThread<ImplClass>::SetSEDIntervalMode(Connecti
 #if CHIP_DEVICE_CONFIG_THREAD_SSED
         // Set CSL period in units of 10 symbols, convert it to microseconds and divide by 1000 to get milliseconds.
         otErr         = otLinkCslSetPeriod(mOTInst, interval.count() * 1000 / OT_US_PER_TEN_SYMBOLS);
+
+        uint32_t temp = interval.count() * 1000 / OT_US_PER_TEN_SYMBOLS;
+        ChipLogProgress(DeviceLayer, "-------------------------------------------------------- SSED interval ASKED VALUE setting to: %" PRId32 " CSL periode -----------------------------------------------------------", temp);
+
+
         curIntervalMS = otLinkCslGetPeriod(mOTInst) * OT_US_PER_TEN_SYMBOLS / 1000;
+        ChipLogProgress(DeviceLayer, "-------------------------------------------------------- SSED interval AFTER setting to: %" PRId32 "ms -----------------------------------------------------------", curIntervalMS);
 #else
         otErr         = otLinkSetPollPeriod(mOTInst, interval.count());
         curIntervalMS = otLinkGetPollPeriod(mOTInst);
@@ -1900,10 +1908,12 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_RequestSEDActiv
 
     if (onOff)
     {
+        ChipLogError(DeviceLayer, "-------------------------------- ACTIVE MODE ---------------------------------------------------");
         mActiveModeConsumers++;
     }
     else
     {
+        ChipLogError(DeviceLayer, "-------------------------------- IDLE MODE ---------------------------------------------------");
         if (mActiveModeConsumers > 0)
             mActiveModeConsumers--;
     }

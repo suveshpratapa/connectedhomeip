@@ -26,6 +26,10 @@
 #include "AppEvent.h"
 #include "BindingHandler.h"
 
+#if defined(SL_CATALOG_POWER_MANAGER_PRESENT)
+#include "sl_power_manager.h"
+#endif
+
 #include "LEDWidget.h"
 
 #include "LightSwitchMgr.h"
@@ -199,6 +203,11 @@ void AppTask::AppTaskMain(void * pvParameter)
 #endif
 
     SILABS_LOG("App Task started");
+
+#if defined(SL_CATALOG_POWER_MANAGER_PRESENT)
+     sl_power_manager_add_em_requirement(SL_POWER_MANAGER_EM1); //HR
+#endif
+
     while (true)
     {
         BaseType_t eventReceived = xQueueReceive(sAppEventQueue, &event, portMAX_DELAY);
