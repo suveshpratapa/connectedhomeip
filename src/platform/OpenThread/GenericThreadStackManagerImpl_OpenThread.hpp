@@ -526,9 +526,7 @@ GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadDeviceType(Connec
 #endif
     case ConnectivityManager::kThreadDeviceType_MinimalEndDevice:
     case ConnectivityManager::kThreadDeviceType_SleepyEndDevice:
-#if CHIP_DEVICE_CONFIG_THREAD_SSED
     case ConnectivityManager::kThreadDeviceType_SynchronizedSleepyEndDevice:
-#endif
         break;
     default:
         ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
@@ -551,11 +549,9 @@ GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadDeviceType(Connec
         case ConnectivityManager::kThreadDeviceType_SleepyEndDevice:
             deviceTypeStr = "SLEEPY END DEVICE";
             break;
-#if CHIP_DEVICE_CONFIG_THREAD_SSED
         case ConnectivityManager::kThreadDeviceType_SynchronizedSleepyEndDevice:
             deviceTypeStr = "SYNCHRONIZED SLEEPY END DEVICE";
             break;
-#endif
         default:
             deviceTypeStr = "(unknown)";
             break;
@@ -587,6 +583,7 @@ GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadDeviceType(Connec
     case ConnectivityManager::kThreadDeviceType_SynchronizedSleepyEndDevice:
         linkMode.mDeviceType   = false;
         linkMode.mRxOnWhenIdle = false;
+        linkMode.mNetworkData  = true;
         break;
     default:
         break;
