@@ -88,7 +88,7 @@ if [ "$#" == "0" ]; then
             Must also set chip_openthread_ftd=false
         enable_synchronized_sed
             Enable Synchronized Sleepy end device. (Default false)
-            Must also set enable_sleepy_device=true chip_openthread_ftd=false
+            Must also set chip_enable_icd_server=true chip_openthread_ftd=false
         use_rs9116
             Build wifi example with extension board rs9116. (Default false)
         use_SiWx917
@@ -192,7 +192,7 @@ else
             shift
             ;;
         --ssed)
-            optArgs+="enable_sleepy_device=true enable_synchronized_sed=true chip_openthread_ftd=false "
+            optArgs+="chip_enable_icd_server=true enable_synchronized_sed=true chip_openthread_ftd=false "
             shift
             ;;
         --low-power)
