@@ -966,6 +966,17 @@ static_assert(CHIP_DEVICE_CONFIG_BLE_EXT_ADVERTISING_INTERVAL_MIN <= CHIP_DEVICE
 #endif
 
 /**
+ * CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+ *
+ * Enable support for Thread Enhanced CSL Sleepy End Device behavior.
+ * (For Thread in Mobile)
+ *
+ */
+#ifndef CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+#define CHIP_DEVICE_CONFIG_THREAD_ECSL_SED 0
+#endif
+
+/**
  * CHIP_DEVICE_CONFIG_THREAD_BORDER_ROUTER
  *
  * Enable Thread Border Router service.

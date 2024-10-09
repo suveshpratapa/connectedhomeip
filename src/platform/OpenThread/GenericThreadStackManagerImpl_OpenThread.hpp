@@ -292,7 +292,18 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadProvis
 
     // Set the dataset as the active dataset for the node.
     Impl()->LockThreadStack();
-    otErr = otDatasetSetActiveTlvs(mOTInst, &tlvs);
+    // otErr = otDatasetSetActiveTlvs(mOTInst, &tlvs);
+
+    otOperationalDataset dataset;
+    otErr = otDatasetParseTlvs(&tlvs, &dataset);
+    if (otErr != OT_ERROR_NONE)
+    {
+        return MapOpenThreadError(otErr);
+    }
+    dataset.mComponents.mIsWakeupChannelPresent = true;
+    dataset.mWakeupChannel = 11;
+    otErr = otDatasetSetActive(mOTInst, &dataset);
+
     Impl()->UnlockThreadStack();
     if (otErr != OT_ERROR_NONE)
     {
@@ -521,6 +532,10 @@ ConnectivityManager::ThreadDeviceType GenericThreadStackManagerImpl_OpenThread<I
         ExitNow(deviceType = ConnectivityManager::kThreadDeviceType_SynchronizedSleepyEndDevice);
 #endif // CHIP_DEVICE_CONFIG_THREAD_SSED
 
+#if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+    ExitNow(deviceType = ConnectivityManager::kThreadDeviceType_EnhancedCslSleepyEndDevice);
+#endif // CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+
     ExitNow(deviceType = ConnectivityManager::kThreadDeviceType_SleepyEndDevice);
 
 exit:
@@ -548,6 +563,9 @@ GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadDeviceType(Connec
 #if CHIP_DEVICE_CONFIG_THREAD_SSED
     case ConnectivityManager::kThreadDeviceType_SynchronizedSleepyEndDevice:
 #endif
+#if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+    case ConnectivityManager::kThreadDeviceType_EnhancedCslSleepyEndDevice:
+#endif
         break;
     default:
         ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
@@ -573,6 +591,11 @@ GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadDeviceType(Connec
 #if CHIP_DEVICE_CONFIG_THREAD_SSED
         case ConnectivityManager::kThreadDeviceType_SynchronizedSleepyEndDevice:
             deviceTypeStr = "SYNCHRONIZED SLEEPY END DEVICE";
+            break;
+#endif
+#if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+        case ConnectivityManager::kThreadDeviceType_EnhancedCslSleepyEndDevice:
+            deviceTypeStr = "ENHANCED CSL SLEEPY END DEVICE";
             break;
 #endif
         default:
@@ -604,6 +627,7 @@ GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadDeviceType(Connec
         break;
     case ConnectivityManager::kThreadDeviceType_SleepyEndDevice:
     case ConnectivityManager::kThreadDeviceType_SynchronizedSleepyEndDevice:
+    case ConnectivityManager::kThreadDeviceType_EnhancedCslSleepyEndDevice:
         linkMode.mDeviceType   = false;
         linkMode.mRxOnWhenIdle = false;
         break;
@@ -1107,8 +1131,33 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::DoInit(otInstanc
         otErr = otIp6SetEnabled(otInst, true);
         VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
 
+#if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+        otErr = otLinkWorEnable(otInst, true);
+
+        if (otErr == OT_ERROR_NONE)
+        {
+#if OPENTHREAD_CONFIG_LOG_LEVEL_DYNAMIC_ENABLE
+            // Use lower log level so as to not affect schedule rx and tx timings.
+            otErr = otLoggingSetLevel(OT_LOG_LEVEL_WARN);
+            VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
+#endif // OPENTHREAD_CONFIG_LOG_LEVEL_DYNAMIC_ENABLE
+            otOperationalDataset activeDataset;
+            otErr = otDatasetGetActive(mOTInst, &activeDataset);
+            VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
+
+            if (activeDataset.mComponents.mIsWakeupChannelPresent)
+            {
+                ChipLogProgress(DeviceLayer, "OpenThread listening for wakeup frames on channel %d.", activeDataset.mWakeupChannel);
+            }
+        }
+        else
+        {
+            err = MapOpenThreadError(otErr);
+        }
+#else
         otErr = otThreadSetEnabled(otInst, true);
         VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
+#endif // CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
 
         ChipLogProgress(DeviceLayer, "OpenThread ifconfig up and thread start");
     }
@@ -1153,6 +1202,9 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetPollingInter
     // Get CSL period in units of 10 symbols, convert it to microseconds and divide by 1000 to get milliseconds.
     uint32_t curIntervalMS = otLinkCslGetPeriod(mOTInst) * OT_US_PER_TEN_SYMBOLS / 1000;
 #endif // OPENTHREAD_API_VERSION
+#elif CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+    // Get CSL period in units of us and divide by 1000 to get milliseconds.
+    uint32_t curIntervalMS = otLinkGetCslPeriod(mOTInst) / 1000;
 #else
     uint32_t curIntervalMS = otLinkGetPollPeriod(mOTInst);
 #endif
@@ -1169,6 +1221,10 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetPollingInter
         otErr         = otLinkCslSetPeriod(mOTInst, pollingInterval.count() * 1000 / OT_US_PER_TEN_SYMBOLS);
         curIntervalMS = otLinkCslGetPeriod(mOTInst) * OT_US_PER_TEN_SYMBOLS / 1000;
 #endif // OPENTHREAD_API_VERSION
+#elif CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+        // Set initial CSL period to 0 for eCSL SEDs. The value is later negotiated with its WC parent.
+        otErr         = otLinkSetCslPeriod(mOTInst, 0);
+        curIntervalMS = 0;
 #else
         otErr         = otLinkSetPollPeriod(mOTInst, pollingInterval.count());
         curIntervalMS = otLinkGetPollPeriod(mOTInst);

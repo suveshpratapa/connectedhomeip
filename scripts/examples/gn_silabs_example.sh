@@ -91,6 +91,10 @@ if [ "$#" == "0" ]; then
             Enable Synchronized Sleepy end device. (Default false)
             Must also set chip_enable_icd_server=true chip_openthread_ftd=false
             --icd can be used to configure both arguments
+        enable_ecsl_mobile_sed
+            Enable Enhanced CSL Sleepy end device for Thread in Mobile. (Default false)
+            Must also set chip_enable_icd_server=true chip_openthread_ftd=false
+            --icd can be used to configure both arguments
         use_rs9116
             Build wifi example with extension board rs9116. (Default false)
         use_SiWx917

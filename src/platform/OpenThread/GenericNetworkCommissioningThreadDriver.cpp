@@ -266,6 +266,8 @@ ThreadCapabilities GenericThreadDriver::GetSupportedThreadFeatures()
     capabilites.SetField(ThreadCapabilities::kIsFullThreadDevice, CHIP_DEVICE_CONFIG_THREAD_FTD);
     capabilites.SetField(ThreadCapabilities::kIsSynchronizedSleepyEndDeviceCapable,
                          (!CHIP_DEVICE_CONFIG_THREAD_FTD && CHIP_DEVICE_CONFIG_THREAD_SSED));
+    capabilites.SetField(ThreadCapabilities::kIsEnhancedCslSleepyEndDeviceCapable,
+                         (!CHIP_DEVICE_CONFIG_THREAD_FTD && CHIP_DEVICE_CONFIG_THREAD_ECSL_SED));
     return capabilites;
 }
 

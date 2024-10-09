@@ -143,6 +143,7 @@ public:
         kThreadDeviceType_MinimalEndDevice            = 3,
         kThreadDeviceType_SleepyEndDevice             = 4,
         kThreadDeviceType_SynchronizedSleepyEndDevice = 5,
+        kThreadDeviceType_EnhancedCslSleepyEndDevice  = 6,
     };
 
     enum BLEAdvertisingMode
