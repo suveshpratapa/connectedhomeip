@@ -2403,6 +2403,20 @@ cluster DoorLock = 257 {
   timed command access(invoke: administer) ClearAliroReaderConfig(): DefaultSuccess = 41;
 }
 
+/** This cluster provides Apple-specific information about the device. */
+cluster AppleDeviceInformation = 323615744 {
+  revision 1;
+
+  readonly attribute optional boolean supportsTapToUnlock = 0;
+  readonly attribute optional boolean supportsWED = 1;
+  readonly attribute command_id generatedCommandList[] = 65528;
+  readonly attribute command_id acceptedCommandList[] = 65529;
+  readonly attribute event_id eventList[] = 65530;
+  readonly attribute attrib_id attributeList[] = 65531;
+  readonly attribute bitmap32 featureMap = 65532;
+  readonly attribute int16u clusterRevision = 65533;
+}
+
 endpoint 0 {
   device type ma_rootdevice = 22, version 1;
   device type ma_powersource = 17, version 1;
@@ -2783,6 +2797,13 @@ endpoint 0 {
     callback attribute activeModeThreshold;
     ram      attribute featureMap default = 0x0000;
     ram      attribute clusterRevision default = 2;
+  }
+
+  server cluster AppleDeviceInformation {
+    ram      attribute supportsTapToUnlock default = 1;
+    ram      attribute supportsWED default = 1;
+    ram      attribute featureMap default = 0;
+    ram      attribute clusterRevision default = 1;
   }
 }
 endpoint 1 {
