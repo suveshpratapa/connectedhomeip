@@ -129,6 +129,7 @@ silabs_executable("lock_app") {
   deps = [
     ":sdk",
     app_data_model,
+    "third_party/apple-matter-extensions"
   ]
 
   if (wifi_soc) {

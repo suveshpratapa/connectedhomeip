@@ -1,0 +1,22 @@
+# Copyright (c) 2023 Apple Inc. All rights reserved.
+#
+# Apple Matter Extensions is licensed under Apple Inc.'s MFi Sample Code
+# License Agreement, which is contained in the LICENSE file distributed with
+# the Apple Matter Extensions, and only to those who accept that license.
+
+import("//build_overrides/chip.gni")
+
+source_set("apple-matter-extensions") {
+  sources = [
+    "lib/src/support/TLV8.cpp",
+  ]
+
+  cflags = [ "-Wconversion" ]
+  deps = [ "${chip_root}/src/lib" ]
+
+  public_configs = [ ":config" ]
+}
+
+config("config") {
+  include_dirs = [ "lib/include" ]
+}

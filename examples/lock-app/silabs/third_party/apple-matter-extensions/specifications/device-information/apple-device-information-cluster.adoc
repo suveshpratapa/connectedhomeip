@@ -1,0 +1,70 @@
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:toc:
+:toclevels: 3
+:sectnumlevels: 4
+endif::[]
+:sectnums:
+:sectanchors:
+:xrefstyle: full
+
+= Apple Device Information Cluster
+
+Copyright (c) 2023 Apple Inc.  All Rights Reserved.
+
+Apple Matter Extensions is licensed under Apple Inc.'s MFi Sample Code License Agreement, which is
+contained in the LICENSE file distributed with the Apple Matter Extensions, and only to those who
+accept that license.
+
+This cluster defines Apple-specific device information.
+
+This cluster, if implemented, SHALL be implemented on the root node endpoint (endpoint 0).
+
+== Revision History
+
+The global ClusterRevision attribute value SHALL be the highest revision number in the table below.
+
+[options="header",valign="middle"]
+|===
+| Revision | Description
+| 1        | Initial Version
+|===
+
+== Classification
+[options="header",valign="middle"]
+|===
+| Hierarchy | Role        | Scope    | PICS Code
+| Base      | Utility     | Node     | N/A
+|===
+
+== Cluster ID
+
+[options="header",valign="middle"]
+|===
+| ID         | Name
+| 0x1349FC00 | Apple Device Information
+|===
+
+== Attributes
+
+[options="header",valign="middle"]
+|===
+| ID       | Name                | Type                     | Constraint     | Quality | Default | Access   | Conformance
+| 0x0000  s| SupportsTapToUnlock | bool                     | all            | F       | FALSE   | R V      | O
+| 0x0001  s| SupportsWED         | bool                     | all            | F       | FALSE   | R V      | O
+|===
+
+=== SupportsTapToUnlock Attribute
+This attribute SHALL be set to TRUE if and only if the device is a lock that supports the Apple tap-to-unlock protocol.
+
+This attribute MAY be implemented and set to FALSE in all other cases.
+
+=== SupportsWED Attribute
+This attribute SHALL be set to TRUE if and only if the device is a lock that supports the WED protocol.
+
+This attribute MAY be implemented and set to FALSE in all other cases.
+

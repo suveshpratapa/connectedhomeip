@@ -1,0 +1,17 @@
+# Copyright (c) 2023 Apple Inc. All rights reserved.
+#
+# Apple Matter Extensions is licensed under Apple Inc.'s MFi Sample Code
+# License Agreement, which is contained in the LICENSE file distributed with
+# the Apple Matter Extensions, and only to those who accept that license.
+
+import("//build_overrides/build.gni")
+import("//build_overrides/pigweed.gni")
+
+buildconfig = "${build_root}/config/BUILDCONFIG.gn"
+check_system_includes = true
+export_compile_commands = [ "//:tests" ]
+
+default_args = {
+  chip_build_tests = true
+  pw_unit_test_AUTOMATIC_RUNNER = "$dir_pigweed/targets/host/run_test"
+}
