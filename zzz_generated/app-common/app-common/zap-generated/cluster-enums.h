@@ -1041,7 +1041,6 @@ enum class ThreadCapabilitiesBitmap : uint16_t
     kIsSleepyEndDeviceCapable             = 0x4,
     kIsFullThreadDevice                   = 0x8,
     kIsSynchronizedSleepyEndDeviceCapable = 0x10,
-    kIsEnhancedCslSleepyEndDeviceCapable  = 0x20,
 };
 
 // Bitmap for WiFiSecurityBitmap

@@ -549,10 +549,6 @@ ConnectivityManager::ThreadDeviceType GenericThreadStackManagerImpl_OpenThread<I
         ExitNow(deviceType = ConnectivityManager::kThreadDeviceType_SynchronizedSleepyEndDevice);
 #endif // CHIP_DEVICE_CONFIG_THREAD_SSED
 
-#if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
-    ExitNow(deviceType = ConnectivityManager::kThreadDeviceType_EnhancedCslSleepyEndDevice);
-#endif // CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
-
     ExitNow(deviceType = ConnectivityManager::kThreadDeviceType_SleepyEndDevice);
 
 exit:
@@ -580,9 +576,6 @@ GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadDeviceType(Connec
 #if CHIP_DEVICE_CONFIG_THREAD_SSED
     case ConnectivityManager::kThreadDeviceType_SynchronizedSleepyEndDevice:
 #endif
-#if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
-    case ConnectivityManager::kThreadDeviceType_EnhancedCslSleepyEndDevice:
-#endif
         break;
     default:
         ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
@@ -603,16 +596,15 @@ GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadDeviceType(Connec
             deviceTypeStr = "MINIMAL END DEVICE";
             break;
         case ConnectivityManager::kThreadDeviceType_SleepyEndDevice:
+#if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+            deviceTypeStr = "ENHANCED CSL SLEEPY END DEVICE";
+#else
             deviceTypeStr = "SLEEPY END DEVICE";
+#endif
             break;
 #if CHIP_DEVICE_CONFIG_THREAD_SSED
         case ConnectivityManager::kThreadDeviceType_SynchronizedSleepyEndDevice:
             deviceTypeStr = "SYNCHRONIZED SLEEPY END DEVICE";
-            break;
-#endif
-#if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
-        case ConnectivityManager::kThreadDeviceType_EnhancedCslSleepyEndDevice:
-            deviceTypeStr = "ENHANCED CSL SLEEPY END DEVICE";
             break;
 #endif
         default:
@@ -644,7 +636,6 @@ GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadDeviceType(Connec
         break;
     case ConnectivityManager::kThreadDeviceType_SleepyEndDevice:
     case ConnectivityManager::kThreadDeviceType_SynchronizedSleepyEndDevice:
-    case ConnectivityManager::kThreadDeviceType_EnhancedCslSleepyEndDevice:
         linkMode.mDeviceType   = false;
         linkMode.mRxOnWhenIdle = false;
         break;
@@ -1213,13 +1204,11 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetPollingInter
         otErr         = otLinkCslSetPeriod(mOTInst, pollingInterval.count() * 1000 / OT_US_PER_TEN_SYMBOLS);
         curIntervalMS = otLinkCslGetPeriod(mOTInst) * OT_US_PER_TEN_SYMBOLS / 1000;
 #endif // OPENTHREAD_API_VERSION
-#elif CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+#else
+#if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
         // Set initial CSL period to 0 for eCSL SEDs. The value is later negotiated with its WC parent.
         otErr         = otLinkSetCslPeriod(mOTInst, 0);
-        curIntervalMS = 0;
-        otErr         = otLinkSetPollPeriod(mOTInst, pollingInterval.count());
-        curIntervalMS = otLinkGetPollPeriod(mOTInst);
-#else
+#endif // CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
         otErr         = otLinkSetPollPeriod(mOTInst, pollingInterval.count());
         curIntervalMS = otLinkGetPollPeriod(mOTInst);
 #endif

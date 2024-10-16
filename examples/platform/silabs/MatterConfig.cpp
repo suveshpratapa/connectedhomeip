@@ -142,8 +142,6 @@ CHIP_ERROR SilabsMatterConfig::InitOpenThread(void)
 #if CHIP_CONFIG_ENABLE_ICD_SERVER
 #if CHIP_DEVICE_CONFIG_THREAD_SSED
     ReturnErrorOnFailure(ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_SynchronizedSleepyEndDevice));
-#elif CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
-    ReturnErrorOnFailure(ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_EnhancedCslSleepyEndDevice));
 #else
     ReturnErrorOnFailure(ConnectivityMgr().SetThreadDeviceType(ConnectivityManager::kThreadDeviceType_SleepyEndDevice));
 #endif
