@@ -57,6 +57,7 @@ source_set("libopenthread-efr32") {
     "${openthread_root}/examples/apps/cli/cli_uart.cpp",
     "${sl_ot_efr32_root}/alarm.c",
     "${sl_ot_efr32_root}/crypto.c",
+    "${sl_ot_efr32_root}/debug_utils.c",
     "${sl_ot_efr32_root}/entropy.c",
     "${sl_ot_efr32_root}/flash.c",
     "${sl_ot_efr32_root}/ieee802154-packet-utils.cpp",

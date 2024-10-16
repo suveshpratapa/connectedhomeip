@@ -1138,8 +1138,8 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::DoInit(otInstanc
         {
 #if OPENTHREAD_CONFIG_LOG_LEVEL_DYNAMIC_ENABLE
             // Use lower log level so as to not affect schedule rx and tx timings.
-            otErr = otLoggingSetLevel(OT_LOG_LEVEL_WARN);
-            VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
+            // otErr = otLoggingSetLevel(OT_LOG_LEVEL_WARN);
+            // VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
 #endif // OPENTHREAD_CONFIG_LOG_LEVEL_DYNAMIC_ENABLE
             otOperationalDataset activeDataset;
             otErr = otDatasetGetActive(mOTInst, &activeDataset);
