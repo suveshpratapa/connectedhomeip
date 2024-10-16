@@ -374,6 +374,23 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_AttachToThreadN
 
     if (dataset.IsCommissioned())
     {
+#if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+        otError otErr = otLinkWorEnable(mOTInst, true);
+
+        if (otErr == OT_ERROR_NONE)
+        {
+#if OPENTHREAD_CONFIG_LOG_LEVEL_DYNAMIC_ENABLE
+            // Use lower log level so as to not affect schedule rx and tx timings.
+            // otErr = otLoggingSetLevel(OT_LOG_LEVEL_WARN);
+            // VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
+#endif // OPENTHREAD_CONFIG_LOG_LEVEL_DYNAMIC_ENABLE
+            otOperationalDataset activeDataset;
+            if (otDatasetGetActive(mOTInst, &activeDataset) == OT_ERROR_NONE && activeDataset.mComponents.mIsWakeupChannelPresent)
+            {
+                ChipLogProgress(DeviceLayer, "OpenThread listening for wakeup frames on channel %d.", activeDataset.mWakeupChannel);
+            }
+        }
+#endif // CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
         ReturnErrorOnFailure(Impl()->SetThreadEnabled(true));
         mpConnectCallback = callback;
     }
@@ -1131,33 +1148,8 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::DoInit(otInstanc
         otErr = otIp6SetEnabled(otInst, true);
         VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
 
-#if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
-        otErr = otLinkWorEnable(otInst, true);
-
-        if (otErr == OT_ERROR_NONE)
-        {
-#if OPENTHREAD_CONFIG_LOG_LEVEL_DYNAMIC_ENABLE
-            // Use lower log level so as to not affect schedule rx and tx timings.
-            // otErr = otLoggingSetLevel(OT_LOG_LEVEL_WARN);
-            // VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
-#endif // OPENTHREAD_CONFIG_LOG_LEVEL_DYNAMIC_ENABLE
-            otOperationalDataset activeDataset;
-            otErr = otDatasetGetActive(mOTInst, &activeDataset);
-            VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
-
-            if (activeDataset.mComponents.mIsWakeupChannelPresent)
-            {
-                ChipLogProgress(DeviceLayer, "OpenThread listening for wakeup frames on channel %d.", activeDataset.mWakeupChannel);
-            }
-        }
-        else
-        {
-            err = MapOpenThreadError(otErr);
-        }
-#else
         otErr = otThreadSetEnabled(otInst, true);
         VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
-#endif // CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
 
         ChipLogProgress(DeviceLayer, "OpenThread ifconfig up and thread start");
     }
@@ -1225,6 +1217,8 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetPollingInter
         // Set initial CSL period to 0 for eCSL SEDs. The value is later negotiated with its WC parent.
         otErr         = otLinkSetCslPeriod(mOTInst, 0);
         curIntervalMS = 0;
+        otErr         = otLinkSetPollPeriod(mOTInst, pollingInterval.count());
+        curIntervalMS = otLinkGetPollPeriod(mOTInst);
 #else
         otErr         = otLinkSetPollPeriod(mOTInst, pollingInterval.count());
         curIntervalMS = otLinkGetPollPeriod(mOTInst);
