@@ -32,7 +32,7 @@
 // src/platform/silabs/Logging.cpp).
 #define OPENTHREAD_CONFIG_LOG_OUTPUT OPENTHREAD_CONFIG_LOG_OUTPUT_APP
 
-#define OPENTHREAD_CONFIG_LOG_LEVEL 3
+#define OPENTHREAD_CONFIG_LOG_LEVEL 5
 #define OPENTHREAD_CONFIG_LOG_LEVEL_DYNAMIC_ENABLE 1
 
 // Turn on a moderate level of logging in OpenThread

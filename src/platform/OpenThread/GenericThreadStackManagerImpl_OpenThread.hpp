@@ -263,8 +263,16 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadEnable
 
     if (val != isEnabled)
     {
+#if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+        if (!val)
+        {
+            otErr = otThreadSetEnabled(mOTInst, val);
+            VerifyOrExit(otErr == OT_ERROR_NONE, );
+        }
+#else
         otErr = otThreadSetEnabled(mOTInst, val);
         VerifyOrExit(otErr == OT_ERROR_NONE, );
+#endif
     }
 
     if (!val && isIp6Enabled)
@@ -300,8 +308,16 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadProvis
     {
         return MapOpenThreadError(otErr);
     }
-    dataset.mComponents.mIsWakeupChannelPresent = true;
-    dataset.mWakeupChannel = 11;
+    if (! dataset.mComponents.mIsWakeupChannelPresent)
+    {
+        dataset.mComponents.mIsWakeupChannelPresent = true;
+        dataset.mWakeupChannel = 11;
+        ChipLogProgress(DeviceLayer, "OpenThread: No wakeup channel received, configured wakeup channel %d.", dataset.mWakeupChannel);
+    }
+    else
+    {
+        ChipLogProgress(DeviceLayer, "OpenThread: Configured received wakeup channel %d.", dataset.mWakeupChannel);
+    }
     otErr = otDatasetSetActive(mOTInst, &dataset);
 
     Impl()->UnlockThreadStack();
@@ -387,11 +403,12 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_AttachToThreadN
             otOperationalDataset activeDataset;
             if (otDatasetGetActive(mOTInst, &activeDataset) == OT_ERROR_NONE && activeDataset.mComponents.mIsWakeupChannelPresent)
             {
-                ChipLogProgress(DeviceLayer, "OpenThread listening for wakeup frames on channel %d.", activeDataset.mWakeupChannel);
+                ChipLogProgress(DeviceLayer, "OpenThread: Listening for wakeup frames on channel %d.", activeDataset.mWakeupChannel);
             }
         }
-#endif // CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+#else
         ReturnErrorOnFailure(Impl()->SetThreadEnabled(true));
+#endif // CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
         mpConnectCallback = callback;
     }
 
@@ -1132,6 +1149,15 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::DoInit(otInstanc
     memset(&mSrpClient, 0, sizeof(mSrpClient));
 #endif // CHIP_DEVICE_CONFIG_ENABLE_THREAD_SRP_CLIENT
 
+#if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+        /* Set the Link Mode configs */
+        otLinkModeConfig config;
+        config.mRxOnWhenIdle = 0;
+        config.mDeviceType   = 0;
+        config.mNetworkData  = 0;
+        SuccessOrExit(otErr = otThreadSetLinkMode(mOTInst, config));
+#endif
+
     // If the Thread stack has been provisioned, but is not currently enabled, enable it now.
     if (otThreadGetDeviceRole(mOTInst) == OT_DEVICE_ROLE_DISABLED && otDatasetIsCommissioned(otInst))
     {
@@ -1139,8 +1165,13 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::DoInit(otInstanc
         otErr = otIp6SetEnabled(otInst, true);
         VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
 
+#if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+        otErr = otLinkWorEnable(mOTInst, true);
+        VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
+#else
         otErr = otThreadSetEnabled(otInst, true);
         VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
+#endif
 
         ChipLogProgress(DeviceLayer, "OpenThread ifconfig up and thread start");
     }
