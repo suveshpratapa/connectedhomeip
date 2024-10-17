@@ -263,16 +263,8 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadEnable
 
     if (val != isEnabled)
     {
-#if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
-        if (!val)
-        {
-            otErr = otThreadSetEnabled(mOTInst, val);
-            VerifyOrExit(otErr == OT_ERROR_NONE, );
-        }
-#else
         otErr = otThreadSetEnabled(mOTInst, val);
         VerifyOrExit(otErr == OT_ERROR_NONE, );
-#endif
     }
 
     if (!val && isIp6Enabled)
@@ -406,9 +398,8 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_AttachToThreadN
                 ChipLogProgress(DeviceLayer, "OpenThread: Listening for wakeup frames on channel %d.", activeDataset.mWakeupChannel);
             }
         }
-#else
-        ReturnErrorOnFailure(Impl()->SetThreadEnabled(true));
 #endif // CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
+        ReturnErrorOnFailure(Impl()->SetThreadEnabled(true));
         mpConnectCallback = callback;
     }
 
@@ -1150,7 +1141,7 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::DoInit(otInstanc
 #endif // CHIP_DEVICE_CONFIG_ENABLE_THREAD_SRP_CLIENT
 
 #if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
-        /* Set the Link Mode configs */
+        // Initialize link mode for eCSL SED so it can enable wakeup sampling
         otLinkModeConfig config;
         config.mRxOnWhenIdle = 0;
         config.mDeviceType   = 0;
@@ -1168,10 +1159,10 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::DoInit(otInstanc
 #if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
         otErr = otLinkWorEnable(mOTInst, true);
         VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
-#else
+#endif
+
         otErr = otThreadSetEnabled(otInst, true);
         VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
-#endif
 
         ChipLogProgress(DeviceLayer, "OpenThread ifconfig up and thread start");
     }
@@ -1216,9 +1207,6 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetPollingInter
     // Get CSL period in units of 10 symbols, convert it to microseconds and divide by 1000 to get milliseconds.
     uint32_t curIntervalMS = otLinkCslGetPeriod(mOTInst) * OT_US_PER_TEN_SYMBOLS / 1000;
 #endif // OPENTHREAD_API_VERSION
-#elif CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
-    // Get CSL period in units of us and divide by 1000 to get milliseconds.
-    uint32_t curIntervalMS = otLinkGetCslPeriod(mOTInst) / 1000;
 #else
     uint32_t curIntervalMS = otLinkGetPollPeriod(mOTInst);
 #endif
@@ -1236,10 +1224,6 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetPollingInter
         curIntervalMS = otLinkCslGetPeriod(mOTInst) * OT_US_PER_TEN_SYMBOLS / 1000;
 #endif // OPENTHREAD_API_VERSION
 #else
-#if CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
-        // Set initial CSL period to 0 for eCSL SEDs. The value is later negotiated with its WC parent.
-        otErr         = otLinkSetCslPeriod(mOTInst, 0);
-#endif // CHIP_DEVICE_CONFIG_THREAD_ECSL_SED
         otErr         = otLinkSetPollPeriod(mOTInst, pollingInterval.count());
         curIntervalMS = otLinkGetPollPeriod(mOTInst);
 #endif
