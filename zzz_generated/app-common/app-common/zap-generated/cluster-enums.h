@@ -4807,6 +4807,8 @@ enum class StatusEnum : uint8_t
 
 namespace ElectricalMeasurement {} // namespace ElectricalMeasurement
 
+namespace AppleDeviceInformation {} // namespace AppleDeviceInformation
+
 namespace UnitTesting {
 
 // Enum for SimpleEnum

@@ -5191,6 +5191,32 @@ Protocols::InteractionModel::Status Set(chip::EndpointId endpoint, uint16_t valu
 } // namespace Attributes
 } // namespace ElectricalMeasurement
 
+namespace AppleDeviceInformation {
+namespace Attributes {
+
+namespace SupportsTapToUnlock {
+Protocols::InteractionModel::Status Get(chip::EndpointId endpoint, bool * value); // boolean
+Protocols::InteractionModel::Status Set(chip::EndpointId endpoint, bool value);
+} // namespace SupportsTapToUnlock
+
+namespace SupportsWED {
+Protocols::InteractionModel::Status Get(chip::EndpointId endpoint, bool * value); // boolean
+Protocols::InteractionModel::Status Set(chip::EndpointId endpoint, bool value);
+} // namespace SupportsWED
+
+namespace FeatureMap {
+Protocols::InteractionModel::Status Get(chip::EndpointId endpoint, uint32_t * value); // bitmap32
+Protocols::InteractionModel::Status Set(chip::EndpointId endpoint, uint32_t value);
+} // namespace FeatureMap
+
+namespace ClusterRevision {
+Protocols::InteractionModel::Status Get(chip::EndpointId endpoint, uint16_t * value); // int16u
+Protocols::InteractionModel::Status Set(chip::EndpointId endpoint, uint16_t value);
+} // namespace ClusterRevision
+
+} // namespace Attributes
+} // namespace AppleDeviceInformation
+
 namespace UnitTesting {
 namespace Attributes {
 
