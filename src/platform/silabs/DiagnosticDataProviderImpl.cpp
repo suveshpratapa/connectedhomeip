@@ -219,7 +219,11 @@ CHIP_ERROR DiagnosticDataProviderImpl::GetNetworkInterfaces(NetworkInterface ** 
     const char * threadNetworkName = otThreadGetNetworkName(ThreadStackMgrImpl().OTInstance());
     ifp->name                      = Span<const char>(threadNetworkName, strlen(threadNetworkName));
     ifp->type                      = InterfaceTypeEnum::kThread;
+#if CHIP_DEVICE_CONFIG_THREAD_WED
+    ifp->isOperational             = otLinkIsWakeupListenEnabled(ThreadStackMgrImpl().OTInstance());
+#else
     ifp->isOperational             = ThreadStackMgrImpl().IsThreadAttached();
+#endif
     ifp->offPremiseServicesReachableIPv4.SetNull();
     ifp->offPremiseServicesReachableIPv6.SetNull();
 

@@ -294,6 +294,7 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadProvis
     VerifyOrReturnError(mOTInst, CHIP_ERROR_INCORRECT_STATE);
     otError otErr = OT_ERROR_FAILED;
     otOperationalDatasetTlvs tlvs;
+    otOperationalDataset dataset;
 
     assert(netInfo.size() <= Thread::kSizeOperationalDataset);
     tlvs.mLength = static_cast<uint8_t>(netInfo.size());
@@ -301,7 +302,30 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadProvis
 
     // Set the dataset as the active dataset for the node.
     Impl()->LockThreadStack();
-    otErr = otDatasetSetActiveTlvs(mOTInst, &tlvs);
+
+    // otErr = otDatasetSetActiveTlvs(mOTInst, &tlvs);
+
+    otErr = otDatasetParseTlvs(&tlvs, &dataset);
+    if (otErr != OT_ERROR_NONE)
+    {
+        return MapOpenThreadError(otErr);
+    }
+
+#if CHIP_DEVICE_CONFIG_THREAD_WED
+    // Check if dataset contain Wake-up channel, if not set to 11 by default.
+    if (!dataset.mComponents.mIsWakeupChannelPresent)
+    {
+        dataset.mComponents.mIsWakeupChannelPresent = true;
+        dataset.mWakeupChannel = 11;
+        ChipLogProgress(DeviceLayer, "WED: Configuring default Wake-up channel %d.", dataset.mWakeupChannel);
+    }
+    else
+    {
+        ChipLogProgress(DeviceLayer, "WED: Configured received Wake-up channel %d.", dataset.mWakeupChannel);
+    }
+#endif
+    otErr = otDatasetSetActive(mOTInst, &dataset);
+
     Impl()->UnlockThreadStack();
     if (otErr != OT_ERROR_NONE)
     {
@@ -379,6 +403,21 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_AttachToThreadN
 
     if (dataset.IsCommissioned())
     {
+#if CHIP_DEVICE_CONFIG_THREAD_WED
+        otError otErr = otLinkSetWakeUpListenEnabled(mOTInst, true);
+
+        if (otErr == OT_ERROR_NONE)
+        {
+#if OPENTHREAD_CONFIG_LOG_LEVEL_DYNAMIC_ENABLE
+            // Use lower log level so as to not affect schedule rx and tx timings.
+            otLoggingSetLevel(OT_LOG_LEVEL_WARN);
+#endif
+        }
+        else
+        {
+            return MapOpenThreadError(otErr);
+        }
+#endif // CHIP_DEVICE_CONFIG_THREAD_WED
         ReturnErrorOnFailure(Impl()->SetThreadEnabled(true));
         mpConnectCallback = callback;
     }
@@ -1123,6 +1162,28 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::ConfigureThreadS
         otErr = otIp6SetEnabled(otInst, true);
         VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
 
+#if CHIP_DEVICE_CONFIG_THREAD_WED
+        otErr = otLinkSetWakeUpListenEnabled(otInst, true);
+
+        if (otErr == OT_ERROR_NONE)
+        {
+#if OPENTHREAD_CONFIG_LOG_LEVEL_DYNAMIC_ENABLE
+            // Use lower log level so as to not affect schedule rx and tx timings.
+            otLoggingSetLevel(OT_LOG_LEVEL_WARN);
+#endif
+            otOperationalDataset activeDataset;
+            otErr = otDatasetGetActive(mOTInst, &activeDataset);
+            VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
+            if (activeDataset.mComponents.mIsWakeupChannelPresent)
+            {
+                ChipLogProgress(DeviceLayer, "WED: Listening for Wake-up frames on channel %d.", activeDataset.mWakeupChannel);
+            }
+        }
+        else
+        {
+            err = MapOpenThreadError(otErr);
+        }
+#endif // CHIP_DEVICE_CONFIG_THREAD_WED
         otErr = otThreadSetEnabled(otInst, true);
         VerifyOrExit(otErr == OT_ERROR_NONE, err = MapOpenThreadError(otErr));
 
