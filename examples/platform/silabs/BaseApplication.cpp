@@ -816,6 +816,9 @@ void BaseApplication::UpdateLCDStatusScreen()
         ? SilabsLCD::ICDMode_e::SIT
         : SilabsLCD::ICDMode_e::LIT;
 #endif
+#if CHIP_DEVICE_CONFIG_THREAD_WED
+    status.wedStatus = (SilabsLCD::WedStatus_e)GetWedStatus();
+#endif
     chip::DeviceLayer::PlatformMgr().UnlockChipStack();
     slLCD.SetStatus(status);
 }
@@ -1004,3 +1007,29 @@ bool BaseApplication::GetProvisionStatus()
 {
     return BaseApplication::sIsProvisioned;
 }
+
+#if CHIP_DEVICE_CONFIG_THREAD_WED && DISPLAY_ENABLED
+uint8_t BaseApplication::GetWedStatus(void)
+{
+    uint8_t status;
+
+    if (ConnectivityMgr().IsEnhCslPeerLinked())
+    {
+        status = SilabsLCD::WedStatus_e::Linked;
+    }
+    else if (ConnectivityMgr().IsEnhCslPeerLinking())
+    {
+        status = SilabsLCD::WedStatus_e::Linking;
+    }
+    else if (ConnectivityMgr().IsWakeupListenEnabled())
+    {
+        status = SilabsLCD::WedStatus_e::Enabled;
+    }
+    else
+    {
+        status = SilabsLCD::WedStatus_e::Disabled;
+    }
+
+    return (uint8_t)status;
+}
+#endif

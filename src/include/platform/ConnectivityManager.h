@@ -213,6 +213,11 @@ public:
     CHIP_ERROR DisconnectNetwork();
 
     // Thread Methods
+#if CHIP_DEVICE_CONFIG_THREAD_WED
+    bool IsEnhCslPeerLinked();
+    bool IsEnhCslPeerLinking();
+    bool IsWakeupListenEnabled();
+#endif
     bool IsThreadEnabled();
     ThreadDeviceType GetThreadDeviceType();
     CHIP_ERROR SetThreadDeviceType(ThreadDeviceType deviceType);
@@ -490,6 +495,23 @@ inline CHIP_ERROR ConnectivityManager::WiFiPAFShutdown(uint32_t id, WiFiPAF::WiF
 inline bool ConnectivityManager::WiFiPAFResourceAvailable()
 {
     return static_cast<ImplClass *>(this)->_WiFiPAFResourceAvailable();
+}
+#endif
+
+#if CHIP_DEVICE_CONFIG_THREAD_WED
+inline bool ConnectivityManager::IsEnhCslPeerLinked(void)
+{
+    return static_cast<ImplClass *>(this)->_IsEnhCslPeerLinked();
+}
+
+inline bool ConnectivityManager::IsEnhCslPeerLinking(void)
+{
+    return static_cast<ImplClass *>(this)->_IsEnhCslPeerLinking();
+}
+
+inline bool ConnectivityManager::IsWakeupListenEnabled(void)
+{
+    return static_cast<ImplClass *>(this)->_IsWakeupListenEnabled();
 }
 #endif
 

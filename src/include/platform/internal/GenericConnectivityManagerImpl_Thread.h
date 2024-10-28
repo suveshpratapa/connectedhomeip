@@ -57,6 +57,11 @@ protected:
 
     void _Init();
     void _OnPlatformEvent(const ChipDeviceEvent * event);
+#if CHIP_DEVICE_CONFIG_THREAD_WED
+    bool _IsEnhCslPeerLinked(void);
+    bool _IsEnhCslPeerLinking(void);
+    bool _IsWakeupListenEnabled(void);
+#endif
     bool _IsThreadEnabled();
     ConnectivityManager::ThreadDeviceType _GetThreadDeviceType();
     CHIP_ERROR _SetThreadDeviceType(ConnectivityManager::ThreadDeviceType deviceType);
@@ -90,6 +95,26 @@ inline void GenericConnectivityManagerImpl_Thread<ImplClass>::_Init()
 {
     mFlags.ClearAll();
 }
+
+#if CHIP_DEVICE_CONFIG_THREAD_WED
+template <class ImplClass>
+inline bool GenericConnectivityManagerImpl_Thread<ImplClass>::_IsEnhCslPeerLinked()
+{
+    return ThreadStackMgrImpl().IsEnhCslPeerLinked();
+}
+
+template <class ImplClass>
+inline bool GenericConnectivityManagerImpl_Thread<ImplClass>::_IsEnhCslPeerLinking()
+{
+    return ThreadStackMgrImpl().IsEnhCslPeerLinking();
+}
+
+template <class ImplClass>
+inline bool GenericConnectivityManagerImpl_Thread<ImplClass>::_IsWakeupListenEnabled()
+{
+    return ThreadStackMgrImpl().IsWakeupListenEnabled();
+}
+#endif
 
 template <class ImplClass>
 inline bool GenericConnectivityManagerImpl_Thread<ImplClass>::_IsThreadEnabled()

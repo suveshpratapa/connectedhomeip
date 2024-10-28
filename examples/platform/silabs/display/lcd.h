@@ -43,6 +43,16 @@ public:
         InvalidScreen,
     } Screen_e;
 
+#if CHIP_DEVICE_CONFIG_THREAD_WED
+    typedef enum wedStatus
+    {
+        Disabled = 0,
+        Enabled,
+        Linking,
+        Linked,
+    } WedStatus_e;
+#endif
+
     typedef enum icdMode
     {
         NotICD = 0,
@@ -57,6 +67,9 @@ public:
         char networkName[chip::DeviceLayer::Internal::kMaxWiFiSSIDLength] = { 0 };
         bool advertising                                                  = false;
         ICDMode_e icdMode                                                 = NotICD;
+#if CHIP_DEVICE_CONFIG_THREAD_WED
+        WedStatus_e wedStatus                                             = Disabled;
+#endif
     } DisplayStatus_t;
 
     typedef void (*customUICB)(GLIB_Context_t * context);
@@ -86,6 +99,10 @@ private:
         bool mainState = false;
         bool protocol1 = false; /* data */
     } DemoState_t;
+
+#if CHIP_DEVICE_CONFIG_THREAD_WED
+void WedStatusEnumToString(WedStatus_e status, char *str);
+#endif
 
 #ifdef QR_CODE_ENABLED
     void WriteQRCode();

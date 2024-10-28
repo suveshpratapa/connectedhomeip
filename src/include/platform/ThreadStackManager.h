@@ -99,6 +99,11 @@ public:
     bool TryLockThreadStack();
     void UnlockThreadStack();
     bool HaveRouteToAddress(const chip::Inet::IPAddress & destAddr);
+#if CHIP_DEVICE_CONFIG_THREAD_WED
+    bool IsEnhCslPeerLinked();
+    bool IsEnhCslPeerLinking();
+    bool IsWakeupListenEnabled();
+#endif
     bool IsThreadEnabled();
     bool IsThreadProvisioned();
     bool IsThreadAttached();
@@ -282,6 +287,23 @@ inline void ThreadStackManager::OnPlatformEvent(const ChipDeviceEvent * event)
 {
     static_cast<ImplClass *>(this)->_OnPlatformEvent(event);
 }
+
+#if CHIP_DEVICE_CONFIG_THREAD_WED
+inline bool ThreadStackManager::IsEnhCslPeerLinked()
+{
+    return static_cast<ImplClass *>(this)->_IsEnhCslPeerLinked();
+}
+
+inline bool ThreadStackManager::IsEnhCslPeerLinking()
+{
+    return static_cast<ImplClass *>(this)->_IsEnhCslPeerLinking();
+}
+
+inline bool ThreadStackManager::IsWakeupListenEnabled()
+{
+    return static_cast<ImplClass *>(this)->_IsWakeupListenEnabled();
+}
+#endif
 
 inline bool ThreadStackManager::IsThreadEnabled()
 {

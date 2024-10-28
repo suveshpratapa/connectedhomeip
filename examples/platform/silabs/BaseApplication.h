@@ -133,6 +133,13 @@ public:
 
     static void UpdateLCDStatusScreen();
 
+#if CHIP_DEVICE_CONFIG_THREAD_WED
+    /**
+     * @brief Return status of the WED link.
+     */
+    static uint8_t GetWedStatus(void);
+#endif
+
     /**
      * @brief Overridable function used to update display on button press
      */
