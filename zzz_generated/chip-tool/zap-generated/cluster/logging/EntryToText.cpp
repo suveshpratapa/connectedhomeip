@@ -299,6 +299,8 @@ char const * ClusterIdToText(chip::ClusterId id)
         return "MeterIdentification";
     case chip::app::Clusters::CommodityMetering::Id:
         return "CommodityMetering";
+    case chip::app::Clusters::AppleDeviceInformation::Id:
+        return "AppleDeviceInformation";
     case chip::app::Clusters::UnitTesting::Id:
         return "UnitTesting";
     case chip::app::Clusters::FaultInjection::Id:
@@ -4776,6 +4778,25 @@ char const * AttributeIdToText(chip::ClusterId cluster, chip::AttributeId id)
         case chip::app::Clusters::CommodityMetering::Attributes::FeatureMap::Id:
             return "FeatureMap";
         case chip::app::Clusters::CommodityMetering::Attributes::ClusterRevision::Id:
+            return "ClusterRevision";
+        default:
+            return "Unknown";
+        }
+    }
+    case chip::app::Clusters::AppleDeviceInformation::Id: {
+        switch (id)
+        {
+        case chip::app::Clusters::AppleDeviceInformation::Attributes::SupportsWED::Id:
+            return "SupportsWED";
+        case chip::app::Clusters::AppleDeviceInformation::Attributes::GeneratedCommandList::Id:
+            return "GeneratedCommandList";
+        case chip::app::Clusters::AppleDeviceInformation::Attributes::AcceptedCommandList::Id:
+            return "AcceptedCommandList";
+        case chip::app::Clusters::AppleDeviceInformation::Attributes::AttributeList::Id:
+            return "AttributeList";
+        case chip::app::Clusters::AppleDeviceInformation::Attributes::FeatureMap::Id:
+            return "FeatureMap";
+        case chip::app::Clusters::AppleDeviceInformation::Attributes::ClusterRevision::Id:
             return "ClusterRevision";
         default:
             return "Unknown";

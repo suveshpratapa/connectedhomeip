@@ -19306,6 +19306,76 @@ public class ClusterReadMapping {
      
        return result;
     }
+    private static Map<String, InteractionInfo> readAppleDeviceInformationInteractionInfo() {
+       Map<String, InteractionInfo> result = new LinkedHashMap<>();Map<String, CommandParameterInfo> readAppleDeviceInformationSupportsWEDCommandParams = new LinkedHashMap<String, CommandParameterInfo>();
+        InteractionInfo readAppleDeviceInformationSupportsWEDAttributeInteractionInfo = new InteractionInfo(
+          (cluster, callback, commandArguments) -> {
+            ((ChipClusters.AppleDeviceInformationCluster) cluster).readSupportsWEDAttribute(
+              (ChipClusters.BooleanAttributeCallback) callback
+            );
+          },
+          () -> new ClusterInfoMapping.DelegatedBooleanAttributeCallback(),
+          readAppleDeviceInformationSupportsWEDCommandParams
+        );
+        result.put("readSupportsWEDAttribute", readAppleDeviceInformationSupportsWEDAttributeInteractionInfo);
+     Map<String, CommandParameterInfo> readAppleDeviceInformationGeneratedCommandListCommandParams = new LinkedHashMap<String, CommandParameterInfo>();
+        InteractionInfo readAppleDeviceInformationGeneratedCommandListAttributeInteractionInfo = new InteractionInfo(
+          (cluster, callback, commandArguments) -> {
+            ((ChipClusters.AppleDeviceInformationCluster) cluster).readGeneratedCommandListAttribute(
+              (ChipClusters.AppleDeviceInformationCluster.GeneratedCommandListAttributeCallback) callback
+            );
+          },
+          () -> new ClusterInfoMapping.DelegatedAppleDeviceInformationClusterGeneratedCommandListAttributeCallback(),
+          readAppleDeviceInformationGeneratedCommandListCommandParams
+        );
+        result.put("readGeneratedCommandListAttribute", readAppleDeviceInformationGeneratedCommandListAttributeInteractionInfo);
+     Map<String, CommandParameterInfo> readAppleDeviceInformationAcceptedCommandListCommandParams = new LinkedHashMap<String, CommandParameterInfo>();
+        InteractionInfo readAppleDeviceInformationAcceptedCommandListAttributeInteractionInfo = new InteractionInfo(
+          (cluster, callback, commandArguments) -> {
+            ((ChipClusters.AppleDeviceInformationCluster) cluster).readAcceptedCommandListAttribute(
+              (ChipClusters.AppleDeviceInformationCluster.AcceptedCommandListAttributeCallback) callback
+            );
+          },
+          () -> new ClusterInfoMapping.DelegatedAppleDeviceInformationClusterAcceptedCommandListAttributeCallback(),
+          readAppleDeviceInformationAcceptedCommandListCommandParams
+        );
+        result.put("readAcceptedCommandListAttribute", readAppleDeviceInformationAcceptedCommandListAttributeInteractionInfo);
+     Map<String, CommandParameterInfo> readAppleDeviceInformationAttributeListCommandParams = new LinkedHashMap<String, CommandParameterInfo>();
+        InteractionInfo readAppleDeviceInformationAttributeListAttributeInteractionInfo = new InteractionInfo(
+          (cluster, callback, commandArguments) -> {
+            ((ChipClusters.AppleDeviceInformationCluster) cluster).readAttributeListAttribute(
+              (ChipClusters.AppleDeviceInformationCluster.AttributeListAttributeCallback) callback
+            );
+          },
+          () -> new ClusterInfoMapping.DelegatedAppleDeviceInformationClusterAttributeListAttributeCallback(),
+          readAppleDeviceInformationAttributeListCommandParams
+        );
+        result.put("readAttributeListAttribute", readAppleDeviceInformationAttributeListAttributeInteractionInfo);
+     Map<String, CommandParameterInfo> readAppleDeviceInformationFeatureMapCommandParams = new LinkedHashMap<String, CommandParameterInfo>();
+        InteractionInfo readAppleDeviceInformationFeatureMapAttributeInteractionInfo = new InteractionInfo(
+          (cluster, callback, commandArguments) -> {
+            ((ChipClusters.AppleDeviceInformationCluster) cluster).readFeatureMapAttribute(
+              (ChipClusters.LongAttributeCallback) callback
+            );
+          },
+          () -> new ClusterInfoMapping.DelegatedLongAttributeCallback(),
+          readAppleDeviceInformationFeatureMapCommandParams
+        );
+        result.put("readFeatureMapAttribute", readAppleDeviceInformationFeatureMapAttributeInteractionInfo);
+     Map<String, CommandParameterInfo> readAppleDeviceInformationClusterRevisionCommandParams = new LinkedHashMap<String, CommandParameterInfo>();
+        InteractionInfo readAppleDeviceInformationClusterRevisionAttributeInteractionInfo = new InteractionInfo(
+          (cluster, callback, commandArguments) -> {
+            ((ChipClusters.AppleDeviceInformationCluster) cluster).readClusterRevisionAttribute(
+              (ChipClusters.IntegerAttributeCallback) callback
+            );
+          },
+          () -> new ClusterInfoMapping.DelegatedIntegerAttributeCallback(),
+          readAppleDeviceInformationClusterRevisionCommandParams
+        );
+        result.put("readClusterRevisionAttribute", readAppleDeviceInformationClusterRevisionAttributeInteractionInfo);
+     
+       return result;
+    }
     private static Map<String, InteractionInfo> readUnitTestingInteractionInfo() {
        Map<String, InteractionInfo> result = new LinkedHashMap<>();Map<String, CommandParameterInfo> readUnitTestingBooleanCommandParams = new LinkedHashMap<String, CommandParameterInfo>();
         InteractionInfo readUnitTestingBooleanAttributeInteractionInfo = new InteractionInfo(
@@ -20581,6 +20651,7 @@ public class ClusterReadMapping {
             put("tlsClientManagement", readTlsClientManagementInteractionInfo());
             put("meterIdentification", readMeterIdentificationInteractionInfo());
             put("commodityMetering", readCommodityMeteringInteractionInfo());
+            put("appleDeviceInformation", readAppleDeviceInformationInteractionInfo());
             put("unitTesting", readUnitTestingInteractionInfo());
             put("faultInjection", readFaultInjectionInteractionInfo());
             put("sampleMei", readSampleMeiInteractionInfo());}};

@@ -5146,6 +5146,19 @@ static id _Nullable DecodeEventPayloadForCommodityMeteringCluster(EventId aEvent
     *aError = CHIP_ERROR_IM_MALFORMED_EVENT_PATH_IB;
     return nil;
 }
+static id _Nullable DecodeEventPayloadForAppleDeviceInformationCluster(EventId aEventId, TLV::TLVReader & aReader, CHIP_ERROR * aError)
+{
+    using namespace Clusters::AppleDeviceInformation;
+    switch (aEventId) {
+    default: {
+        // Not a known AppleDeviceInformation event.
+        break;
+    }
+    }
+
+    *aError = CHIP_ERROR_IM_MALFORMED_EVENT_PATH_IB;
+    return nil;
+}
 static id _Nullable DecodeEventPayloadForUnitTestingCluster(EventId aEventId, TLV::TLVReader & aReader, CHIP_ERROR * aError)
 {
     using namespace Clusters::UnitTesting;
@@ -5741,6 +5754,9 @@ id _Nullable MTRDecodeEventPayload(const ConcreteEventPath & aPath, TLV::TLVRead
     }
     case Clusters::CommodityMetering::Id: {
         return DecodeEventPayloadForCommodityMeteringCluster(aPath.mEventId, aReader, aError);
+    }
+    case Clusters::AppleDeviceInformation::Id: {
+        return DecodeEventPayloadForAppleDeviceInformationCluster(aPath.mEventId, aReader, aError);
     }
     case Clusters::UnitTesting::Id: {
         return DecodeEventPayloadForUnitTestingCluster(aPath.mEventId, aReader, aError);

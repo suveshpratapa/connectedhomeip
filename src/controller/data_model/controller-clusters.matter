@@ -11307,6 +11307,18 @@ provisional cluster CommodityMetering = 2823 {
   readonly attribute int16u clusterRevision = 65533;
 }
 
+/** This cluster provides Apple-specific information about the device. */
+cluster AppleDeviceInformation = 323615744 {
+  revision 1;
+
+  readonly attribute optional boolean supportsWED = 1;
+  readonly attribute command_id generatedCommandList[] = 65528;
+  readonly attribute command_id acceptedCommandList[] = 65529;
+  readonly attribute attrib_id attributeList[] = 65531;
+  readonly attribute bitmap32 featureMap = 65532;
+  readonly attribute int16u clusterRevision = 65533;
+}
+
 /** The Test Cluster is meant to validate the generated code */
 internal cluster UnitTesting = 4294048773 {
   revision 1; // NOTE: Default/not specifically set

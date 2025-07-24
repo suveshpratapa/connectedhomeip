@@ -149,6 +149,7 @@ Generally regenerate using one of:
 |       2050 |      0x802 | TlsClientManagement                                     |
 |       2822 |      0xB06 | MeterIdentification                                     |
 |       2823 |      0xB07 | CommodityMetering                                       |
+|  323615744 | 0x1349FC00 | AppleDeviceInformation                                  |
 | 4294048773 | 0xFFF1FC05 | UnitTesting                                             |
 | 4294048774 | 0xFFF1FC06 | FaultInjection                                          |
 | 4294048800 | 0xFFF1FC20 | SampleMei                                               |

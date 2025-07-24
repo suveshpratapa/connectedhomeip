@@ -167,7 +167,7 @@ bool TLVReader::ReadTagData(uint8_t * buf, size_t count)
         }
     }
     VerifyOrDie(Read(buf, count));
-    mFragmentRemaining -= count;
+    mFragmentRemaining -= (uint8_t) count;
     return true;
 }
 
