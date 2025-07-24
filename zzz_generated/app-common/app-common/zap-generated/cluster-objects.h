@@ -47,6 +47,10 @@
 #include <clusters/AirQuality/Commands.h>
 #include <clusters/AirQuality/Events.h>
 #include <clusters/AirQuality/Structs.h>
+#include <clusters/AppleDeviceInformation/Attributes.h>
+#include <clusters/AppleDeviceInformation/Commands.h>
+#include <clusters/AppleDeviceInformation/Events.h>
+#include <clusters/AppleDeviceInformation/Structs.h>
 #include <clusters/ApplicationBasic/Attributes.h>
 #include <clusters/ApplicationBasic/Commands.h>
 #include <clusters/ApplicationBasic/Events.h>

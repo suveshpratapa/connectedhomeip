@@ -130,6 +130,7 @@ silabs_executable("lock_app") {
     ":sdk",
     "${chip_root}/src/platform/logging:default",
     app_data_model,
+    "third_party/apple-matter-extensions",
   ]
 
   if (wifi_soc) {

@@ -167,6 +167,7 @@
         ],
         "AIR_QUALITY_CLUSTER": ["air-quality-server"],
         "ALARM_CLUSTER": [],
+        "APPLE_DEVICE_INFORMATION_CLUSTER": [ "apple-device-information-server" ],
         "APPLICATION_BASIC_CLUSTER": ["application-basic-server"],
         "APPLICATION_LAUNCHER_CLUSTER": ["application-launcher-server"],
         "AUDIO_OUTPUT_CLUSTER": ["audio-output-server"],

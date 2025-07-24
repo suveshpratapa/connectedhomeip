@@ -47,6 +47,10 @@
 #include <clusters/AirQuality/Commands.ipp>
 #include <clusters/AirQuality/Events.ipp>
 #include <clusters/AirQuality/Structs.ipp>
+#include <clusters/AppleDeviceInformation/Attributes.ipp>
+#include <clusters/AppleDeviceInformation/Commands.ipp>
+#include <clusters/AppleDeviceInformation/Events.ipp>
+#include <clusters/AppleDeviceInformation/Structs.ipp>
 #include <clusters/ApplicationBasic/Attributes.ipp>
 #include <clusters/ApplicationBasic/Commands.ipp>
 #include <clusters/ApplicationBasic/Events.ipp>
