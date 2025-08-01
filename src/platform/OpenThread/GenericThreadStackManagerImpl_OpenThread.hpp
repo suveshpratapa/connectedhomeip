@@ -453,12 +453,23 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_AttachToThreadN
             // Use lower log level so as to not affect schedule rx and tx timings.
             otLoggingSetLevel(OT_LOG_LEVEL_WARN);
 #endif
+            otOperationalDataset activeDataset;
+            otErr = otDatasetGetActive(mOTInst, &activeDataset);
+            if (otErr != OT_ERROR_NONE)
+            {
+                return MapOpenThreadError(otErr);
+            }
+            if (activeDataset.mComponents.mIsWakeupChannelPresent)
+            {
+                ChipLogProgress(DeviceLayer, "WED: Listening for Wake-up frames on channel %d.", activeDataset.mWakeupChannel);
+            }
         }
         else
         {
             return MapOpenThreadError(otErr);
         }
 #endif // CHIP_DEVICE_CONFIG_THREAD_WED
+
         ReturnErrorOnFailure(Impl()->SetThreadEnabled(true));
         mpConnectCallback = callback;
     }
